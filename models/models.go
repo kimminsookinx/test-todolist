@@ -3,6 +3,7 @@ package models
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/kimminsookinx/test-todolist/db"
@@ -31,6 +32,26 @@ func (m TodoItemModel) Post(form forms.CreateTodoItemForm) (todoItemId int64, er
 	}
 	todoItemId, err = operation.LastInsertId()
 	return todoItemId, err
+}
+
+func (m TodoItemModel) UpdateDone(todoItemId int64, form forms.UpdateDoneTodoItemForm) (err error) {
+	var boolString string
+	if *form.Done {
+		boolString = "true"
+	} else {
+		boolString = "false"
+	}
+	operation, err := db.GetDB().Exec("UPDATE todo.item SET done_flag=" + boolString + " WHERE id=" + fmt.Sprintf("%d", todoItemId))
+	if err != nil {
+		return err
+	}
+
+	success, _ := operation.RowsAffected()
+	if success == 0 {
+		return errors.New("updated 0 records")
+	}
+
+	return err
 }
 
 // helpers (https://github.com/Massad/gin-boilerplate/blob/master/models/util.go)

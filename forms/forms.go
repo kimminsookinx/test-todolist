@@ -16,8 +16,9 @@ type UpdateDescTodoItemForm struct {
 	Desc string `form:"description" json:"description" binding:"required,max=50"`
 }
 
+// https://github.com/gin-gonic/gin/issues/814#issuecomment-294636138
 type UpdateDoneTodoItemForm struct {
-	Done bool `form:"done_flag" json:"done_flag" binding:"required"`
+	Done *bool `form:"done_flag" json:"done_flag" binding:"required"`
 }
 
 func (f TodoItemForm) Desc(tag string, errMsg ...string) (message string) {
@@ -53,4 +54,25 @@ func (f TodoItemForm) PostTodoItem(err error) string {
 	}
 
 	return "Something went wrong, please try again later"
+}
+
+func (f TodoItemForm) UpdateDoneFlag(err error) string {
+	switch err.(type) {
+	case validator.ValidationErrors:
+
+		if _, ok := err.(*json.UnmarshalTypeError); ok {
+			return "Something went wrong, please try again later - unmarshall"
+		}
+
+		for _, err := range err.(validator.ValidationErrors) {
+			if err.Field() == "done_flag" {
+				return "boolean required"
+			}
+		}
+
+	default:
+		return "Invalid request"
+	}
+
+	return "Something went wrong, please try again later - update done"
 }

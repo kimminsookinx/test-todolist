@@ -43,6 +43,8 @@ func main() {
 
 		todoRoute.GET("/list", todo.GetList)
 		todoRoute.POST("", todo.PostItem)
+		todoRoute.PUT("/:todoItemId/done", todo.UpdateDoneFlag) //RESTful -> REST : PUT -> PATCH, idempotency?
+
 	}
 	r.Run(":" + os.Getenv("TODO_APP_PORT"))
 }

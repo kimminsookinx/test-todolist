@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/kimminsookinx/test-todolist/forms"
@@ -40,4 +42,30 @@ func (ctrl TodoController) PostItem(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "todoItem created", "id": todoItemId})
+}
+
+func (ctrl TodoController) UpdateDoneFlag(c *gin.Context) {
+	idString := c.Param("todoItemId")
+
+	todoItemId, err := strconv.ParseInt(idString, 10, 64)
+	if todoItemId == 0 || err != nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"Message": "Invalid parameter"})
+		return
+	}
+
+	var form forms.UpdateDoneTodoItemForm
+	if validationErr := c.BindJSON(&form); validationErr != nil {
+		fmt.Print(validationErr.Error())
+		message := todoItemForm.UpdateDoneFlag(validationErr)
+		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{"message": message})
+		return
+	}
+
+	err = todoItemModel.UpdateDone(todoItemId, form)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{"Message": "todoitem could not be updated"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "todo updated"})
 }
