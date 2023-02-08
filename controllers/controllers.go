@@ -30,7 +30,7 @@ func (ctrl TodoController) PostItem(c *gin.Context) {
 	var form forms.CreateTodoItemForm
 
 	if validationErr := c.ShouldBindJSON(&form); validationErr != nil {
-		message := todoItemForm.PostTodoItem(validationErr)
+		message := todoItemForm.CheckDesc(validationErr)
 		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{"message": message})
 		return
 	}
@@ -56,12 +56,38 @@ func (ctrl TodoController) UpdateDoneFlag(c *gin.Context) {
 	var form forms.UpdateDoneTodoItemForm
 	if validationErr := c.BindJSON(&form); validationErr != nil {
 		fmt.Print(validationErr.Error())
-		message := todoItemForm.UpdateDoneFlag(validationErr)
+		message := todoItemForm.CheckDoneFlag(validationErr)
 		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{"message": message})
 		return
 	}
 
 	err = todoItemModel.UpdateDone(todoItemId, form)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{"Message": "todoitem could not be updated"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "todo updated"})
+}
+
+func (ctrl TodoController) UpdateDesc(c *gin.Context) {
+	idString := c.Param("todoItemId")
+
+	todoItemId, err := strconv.ParseInt(idString, 10, 64)
+	if todoItemId == 0 || err != nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"Message": "Invalid parameter"})
+		return
+	}
+
+	var form forms.UpdateDescTodoItemForm
+	if validationErr := c.BindJSON(&form); validationErr != nil {
+		fmt.Print(validationErr.Error())
+		message := todoItemForm.CheckDesc(validationErr)
+		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{"message": message})
+		return
+	}
+
+	err = todoItemModel.UpdateDesc(todoItemId, form)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{"Message": "todoitem could not be updated"})
 		return
