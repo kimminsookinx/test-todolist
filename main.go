@@ -3,6 +3,8 @@
 	https://blog.logrocket.com/building-microservices-go-gin/
 	https://github.com/Massad/gin-boilerplate
 	https://blog.techchee.com/build-a-rest-api-with-golang-gin-and-mysql/
+
+	TODO: get linter
 */
 
 package main
@@ -27,17 +29,20 @@ func main() {
 	r := gin.Default()
 	db.Init()
 
+	//TODO: delete test ping url
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
 		})
 	})
+
+	//TODO: seperate routes for clean main func
 	todoRoute := r.Group("/todo")
 	{
 		todo := new(controllers.TodoController)
 
 		todoRoute.GET("/list", todo.GetList)
-		todoRoute.POST("", todo.GetList)
+		todoRoute.POST("", todo.PostItem)
 	}
 	r.Run(":" + os.Getenv("TODO_APP_PORT"))
 }
