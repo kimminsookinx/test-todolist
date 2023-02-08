@@ -10,6 +10,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -38,5 +39,5 @@ func main() {
 		todoRoute.GET("/list", todo.GetList)
 		todoRoute.POST("", todo.GetList)
 	}
-	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	r.Run(":" + os.Getenv("TODO_APP_PORT"))
 }

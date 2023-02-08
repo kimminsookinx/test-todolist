@@ -22,7 +22,7 @@ type DB struct {
 var db *gorp.DbMap
 
 func Init() {
-	dbinfo := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", os.Getenv("DB_USER"), os.Getenv("DB_PASS"), os.Getenv("DB_ADDRESS"), os.Getenv("DB_PORT"), os.Getenv("DB_NAME"))
+	dbinfo := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", os.Getenv("TODO_DB_USER"), os.Getenv("TODO_DB_PASS"), os.Getenv("TODO_DB_ADDRESS"), os.Getenv("TODO_DB_PORT"), os.Getenv("TODO_DB_NAME"))
 	fmt.Print(dbinfo + "\n")
 	//dbinfo := "user:user@tcp(127.0.0.1:3006)/"
 	var err error
