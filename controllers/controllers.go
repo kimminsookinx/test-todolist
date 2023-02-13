@@ -10,6 +10,14 @@ import (
 	"github.com/kimminsookinx/test-todolist/models"
 )
 
+/*
+	HTTP status code references
+		HTTP methods
+		https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#verbs-on-resources
+		HTTP response code
+		https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#http-status-codes
+*/
+
 type TodoController struct{}
 
 var todoItemModel = new(models.TodoItemModel)
