@@ -15,7 +15,6 @@ func createRoute() {
 		})
 	})
 
-	//TODO: seperate routes for clean main func
 	//TODO: add delete url
 	//TODO: create put for compatability
 	todoRoute := r.Group("/todo")
@@ -25,6 +24,6 @@ func createRoute() {
 		todoRoute.GET("/list", todo.GetList)
 		todoRoute.POST("", todo.PostItem)
 		todoRoute.PUT("/:todoItemId/done", todo.UpdateDoneFlag) //RESTful -> REST : PUT -> PATCH, idempotency?
-		todoRoute.PUT("/:todoItemId/desc", todo.UpdateDesc)     //RESTful -> REST : PUT -> PATCH, idempotency?
+		todoRoute.PATCH("/:todoItemId/desc", todo.UpdateDesc)
 	}
 }
