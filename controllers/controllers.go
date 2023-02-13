@@ -18,6 +18,35 @@ import (
 		https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#http-status-codes
 */
 
+/*
+	HTTP status code responses for todo-app methods
+		GET
+			-200
+			-400
+			-404
+			-500
+		POST
+			-201
+			-400
+			-500
+		PATCH
+			-200
+			-201
+			-400
+			-500
+		DELETE
+			-204
+			-400
+			-404	id not found
+			-500
+		PUT - not in use
+			-200
+			-201
+			-400
+			-500
+
+*/
+
 type TodoController struct{}
 
 var todoItemModel = new(models.TodoItemModel)
