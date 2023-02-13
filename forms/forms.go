@@ -16,9 +16,10 @@ type UpdateDescTodoItemForm struct {
 	Desc string `form:"description" json:"description" binding:"required,max=50"`
 }
 
-// https://github.com/gin-gonic/gin/issues/814#issuecomment-294636138
+//NOTE: boolean binding https://github.com/gin-gonic/gin/issues/814#issuecomment-294636138
+
 type UpdateDoneTodoItemForm struct {
-	Done *bool `form:"done_flag" json:"done_flag" binding:"required"`
+	Done *bool `form:"done" json:"done" binding:"required"`
 }
 
 func (f TodoItemForm) Desc(tag string, errMsg ...string) (message string) {
@@ -65,7 +66,7 @@ func (f TodoItemForm) CheckDoneFlag(err error) string {
 		}
 
 		for _, err := range err.(validator.ValidationErrors) {
-			if err.Field() == "done_flag" {
+			if err.Field() == "done" {
 				return "boolean required"
 			}
 		}

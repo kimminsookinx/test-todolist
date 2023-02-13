@@ -43,7 +43,7 @@ func (m TodoItemModel) TodoItemListWithDeletedItems() (items []TodoItem, err err
 }
 
 func (m TodoItemModel) Post(form forms.CreateTodoItemForm) (todoItemId int64, err error) {
-	operation, err := db.GetDB().Exec("INSERT INTO todo.item(description, done_flag) VALUES(\"" + form.Desc + "\", false)")
+	operation, err := db.GetDB().Exec("INSERT INTO todo.item(description, done) VALUES(\"" + form.Desc + "\", false)")
 	if err != nil {
 		return 0, err
 	}
@@ -58,7 +58,7 @@ func (m TodoItemModel) UpdateDone(todoItemId int64, form forms.UpdateDoneTodoIte
 	} else {
 		boolString = "false"
 	}
-	operation, err := db.GetDB().Exec("UPDATE todo.item SET done_flag=" + boolString + " WHERE id=" + fmt.Sprintf("%d", todoItemId))
+	operation, err := db.GetDB().Exec("UPDATE todo.item SET done=" + boolString + " WHERE id=" + fmt.Sprintf("%d", todoItemId))
 	if err != nil {
 		return err
 	}
