@@ -23,6 +23,7 @@ func main() {
 	err := godotenv.Load("todo.env")
 	if err != nil {
 		log.Fatal("error: failed to load env")
+		return
 	}
 
 	//DEC: initialize DB connection
