@@ -52,10 +52,25 @@ type TodoController struct{}
 var todoItemModel = new(models.TodoItemModel)
 var todoItemForm = new(forms.TodoItemForm)
 
+//TODO: implement common error handler
+
 func (ctrl TodoController) GetList(c *gin.Context) {
-	data, err := todoItemModel.TodoItemList()
+	var data []models.TodoItem
+	var err error
+
+	//NOTE: probably not clean (ex: multiple query param)
+	//		maybe use interceptors(does this even exist)? -> see middleware (https://stackoverflow.com/questions/69948784/how-to-handle-errors-in-gin-middleware)
+
+	if queryDeleteValue, queryDeleteFlag := c.GetQuery("deleted"); queryDeleteValue == "true" {
+		data, err = todoItemModel.TodoItemListWithDeletedItems()
+	} else if !queryDeleteFlag { //redundant code, just for practice
+		data, err = todoItemModel.TodoItemList()
+	} else {
+		data, err = todoItemModel.TodoItemList()
+	}
+
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{"Message": "list failed"})
+		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 

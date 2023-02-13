@@ -10,18 +10,35 @@ import (
 	"github.com/kimminsookinx/test-todolist/forms"
 )
 
+// TODO: if more models are added, divide into {modelName}.go
 type TodoItem struct {
-	ID      int64     `db:"id, primaryket, autoincrement" json:"id"`
-	Desc    string    `db:"description" json:"description"`
-	Created time.Time `db:"created_at" json:"created_at"`
-	Updated time.Time `db:"last_updated_at" json:"last_updated_at"`
-	Done    bool      `db:"done_flag" json:"done_flag"`
+	ID        int64     `db:"id, primaryket, autoincrement" json:"id"`
+	Desc      string    `db:"description" json:"description"`
+	Created   time.Time `db:"created_at" json:"created_at"`
+	Updated   time.Time `db:"last_updated_at" json:"last_updated_at"`
+	Done      bool      `db:"done" json:"done"`
+	Deleted   bool      `db:"deleted" json:"deleted"`
+	DeletedAt time.Time `db:"deleted_at" json:"deleted_at"`
 }
 type TodoItemModel struct{}
 
+//	var databaseQueryLimit = func() string {
+//		fmt.Print("model global var initialized")
+//		return os.Getenv("TODO_DB_QUERY_MAX_LIMIT")
+//	}()
+//
+//TODO: find a way to initialize limit from env vars, currently not working with recievers
+//		tried: init(), var xxx = os.Getenv()
+
+var databaseQueryLimit = "500"
+
 func (m TodoItemModel) TodoItemList() (items []TodoItem, err error) {
-	//"SELECT id, description, created_at, last_updated_at, done_flag FROM todo.item ORDER BY id DESC LIMIT 500"
-	_, err = db.GetDB().Select(&items, "SELECT id, description, created_at, last_updated_at, done_flag FROM todo.item ORDER BY id DESC LIMIT 500")
+	_, err = db.GetDB().Select(&items, "SELECT id, description, created_at, last_updated_at, done, deleted FROM todo.item WHERE deleted=false ORDER BY id DESC LIMIT "+databaseQueryLimit)
+	return items, err
+}
+
+func (m TodoItemModel) TodoItemListWithDeletedItems() (items []TodoItem, err error) {
+	_, err = db.GetDB().Select(&items, "SELECT id, description, created_at, last_updated_at, done FROM todo.item ORDER BY id DESC LIMIT "+databaseQueryLimit)
 	return items, err
 }
 
