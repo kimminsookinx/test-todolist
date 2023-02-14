@@ -67,7 +67,7 @@ func (ctrl TodoController) GetList(c *gin.Context) {
 	//NOTE: probably not clean (ex: multiple query param)
 	//		maybe use interceptors(does this even exist)? -> see middleware (https://stackoverflow.com/questions/69948784/how-to-handle-errors-in-gin-middleware)
 
-	if queryDeleteValue, queryDeleteFlag := c.GetQuery("deleted"); queryDeleteValue == "true" {
+	if queryDeleteValue, queryDeleteFlag := c.GetQuery("showDeleted"); queryDeleteValue == "true" {
 		data, err = todoItemModel.SelectTodoItem()
 	} else if !queryDeleteFlag { //redundant code, just for practice
 		data, err = todoItemModel.SelectTodoItemWhereDeletedIsFalse()
