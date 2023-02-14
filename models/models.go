@@ -92,6 +92,40 @@ func (m TodoItemModel) UpdateTodoItemSetDescById(todoItemId int64, form forms.Up
 	return err
 }
 
+func (m TodoItemModel) UpdateTodoItemSetDeletedIsFalseById(todoItemId int64) (success bool, err error) {
+	tString := time.Now().Format(time.RFC3339)
+	operation, err := db.GetDB().Exec(
+		"UPDATE todo.item " +
+			"SET deleted=true, deleted_at=\"" + tString + "\" " +
+			"WHERE id=" + fmt.Sprintf("%d", todoItemId))
+	if err != nil {
+		return false, err
+	}
+	sqlSuccess, _ := operation.RowsAffected()
+	if sqlSuccess == 0 {
+		return false, errors.New("updated 0 records")
+	}
+	return true, nil
+}
+
+// NOTE: https://stackoverflow.com/questions/1676551/best-way-to-test-if-a-row-exists-in-a-mysql-table
+func (m TodoItemModel) CheckRowExistenceById(todoItemId int64) (result bool, err error) {
+	err = db.GetDB().SelectOne(&result, "SELECT EXISTS(SELECT 1 FROM todo.item WHERE id="+fmt.Sprint(todoItemId)+" LIMIT 1) AS 'exists'")
+	if err != nil {
+		return false, err
+	}
+	return result, nil
+}
+
+func (m TodoItemModel) CheckRowExistenceByIdAndDeleted(todoItemId int64, deleted bool) (result bool, err error) {
+	err = db.GetDB().SelectOne(&result, "SELECT EXISTS(SELECT 1 FROM todo.item WHERE id="+fmt.Sprint(todoItemId)+" AND deleted="+strconv.FormatBool(deleted)+" LIMIT 1) AS 'exists'")
+	if err != nil {
+		return false, err
+	}
+	return result, nil
+}
+
+// TODO: check if used, if not used delete helpers
 // helpers (https://github.com/Massad/gin-boilerplate/blob/master/models/util.go)
 type JSONRaw json.RawMessage
 

@@ -155,3 +155,43 @@ func (ctrl TodoController) UpdateDesc(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "todo updated"})
 }
+
+//NOTE: not using db instance's time might introduce time discrepancy
+//		but this exercise is getting used to go, so we insert datetime from this todo-app
+//		the better way should be using triggers to update if deleted column becomes true
+//		(https://stackoverflow.com/questions/37856582/on-update-current-timestamp-for-only-one-column-in-mysql)
+//TODO: probably should be transaction
+
+func (ctrl TodoController) DeleteItem(c *gin.Context) {
+	//check row existence
+	idString := c.Param("todoItemId")
+	todoItemId, err := strconv.ParseInt(idString, 10, 64)
+	if todoItemId == 0 || err != nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"Message": err.Error()})
+		return
+	}
+
+	exists, err := todoItemModel.CheckRowExistenceByIdAndDeleted(todoItemId, false)
+	if err != nil {
+		c.AbortWithStatus(http.StatusInternalServerError)
+	}
+
+	if !exists {
+		//no row exists, return 404
+		c.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+
+	success, err := todoItemModel.UpdateTodoItemSetDeletedIsFalseById(todoItemId)
+	if !success {
+		//TODO: do not compare error.Error() string, use wrapper
+		if err.Error() == "updated 0 records" {
+			c.AbortWithStatus(http.StatusNotFound)
+		} else {
+			c.AbortWithStatus(http.StatusInternalServerError)
+		}
+		return
+	}
+
+	c.Status(http.StatusNoContent)
+}
