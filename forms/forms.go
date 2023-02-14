@@ -35,7 +35,7 @@ func (f TodoItemForm) Desc(tag string, errMsg ...string) (message string) {
 	}
 }
 
-func (f TodoItemForm) PostTodoItem(err error) string {
+func (f TodoItemForm) CheckDesc(err error) string {
 	switch err.(type) {
 	case validator.ValidationErrors:
 
@@ -56,7 +56,7 @@ func (f TodoItemForm) PostTodoItem(err error) string {
 	return "Something went wrong, please try again later"
 }
 
-func (f TodoItemForm) UpdateDoneFlag(err error) string {
+func (f TodoItemForm) CheckDoneFlag(err error) string {
 	switch err.(type) {
 	case validator.ValidationErrors:
 

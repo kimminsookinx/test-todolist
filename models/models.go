@@ -54,6 +54,20 @@ func (m TodoItemModel) UpdateDone(todoItemId int64, form forms.UpdateDoneTodoIte
 	return err
 }
 
+func (m TodoItemModel) UpdateDesc(todoItemId int64, form forms.UpdateDescTodoItemForm) (err error) {
+	operation, err := db.GetDB().Exec("UPDATE todo.item SET description=\"" + form.Desc + "\" WHERE id=" + fmt.Sprintf("%d", todoItemId))
+	if err != nil {
+		return err
+	}
+
+	success, _ := operation.RowsAffected()
+	if success == 0 {
+		return errors.New("updated 0 records")
+	}
+
+	return err
+}
+
 // helpers (https://github.com/Massad/gin-boilerplate/blob/master/models/util.go)
 type JSONRaw json.RawMessage
 
