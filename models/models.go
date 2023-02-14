@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/kimminsookinx/test-todolist/db"
@@ -22,23 +24,26 @@ type TodoItem struct {
 }
 type TodoItemModel struct{}
 
-//	var databaseQueryLimit = func() string {
-//		fmt.Print("model global var initialized")
-//		return os.Getenv("TODO_DB_QUERY_MAX_LIMIT")
-//	}()
-//
-//TODO: find a way to initialize limit from env vars, currently not working with recievers
-//		tried: init(), var xxx = os.Getenv()
+var queryLimit = "3"
 
-var databaseQueryLimit = "500"
-
-func (m TodoItemModel) TodoItemList() (items []TodoItem, err error) {
-	_, err = db.GetDB().Select(&items, "SELECT id, description, created_at, last_updated_at, done, deleted FROM todo.item WHERE deleted=false ORDER BY id DESC LIMIT "+databaseQueryLimit)
+// TODO: validate env var type
+func (m TodoItemModel) Init() {
+	queryLimit = os.Getenv("TODO_DB_QUERY_MAX_LIMIT")
+}
+func (m TodoItemModel) SelectTodoItemWhereDeletedIsFalse() (items []TodoItem, err error) {
+	_, err = db.GetDB().Select(&items,
+		"SELECT id, description, created_at, last_updated_at, done, deleted, deleted_at"+
+			"FROM todo.item "+
+			"WHERE deleted=false "+
+			"ORDER BY id DESC LIMIT "+queryLimit)
 	return items, err
 }
 
-func (m TodoItemModel) TodoItemListWithDeletedItems() (items []TodoItem, err error) {
-	_, err = db.GetDB().Select(&items, "SELECT id, description, created_at, last_updated_at, done FROM todo.item ORDER BY id DESC LIMIT "+databaseQueryLimit)
+func (m TodoItemModel) SelectTodoItem() (items []TodoItem, err error) {
+	_, err = db.GetDB().Select(&items,
+		"SELECT id, description, created_at, last_updated_at, done deleted, deleted_at"+
+			"FROM todo.item "+
+			"ORDER BY id DESC LIMIT "+queryLimit)
 	return items, err
 }
 

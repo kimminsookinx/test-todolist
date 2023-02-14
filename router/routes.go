@@ -12,12 +12,14 @@ func createRoute() {
 	//TODO: create put for compatability?
 	todoRoute := r.Group("/v1/todos")
 	{
-		todo := new(controllers.TodoController)
+		todoController := new(controllers.TodoController)
 
 		todoRoute.GET("", todo.GetList)
 		todoRoute.POST("", todo.PostItem)
 		todoRoute.PUT("/:todoItemId/done", todo.UpdateDoneFlag) //RESTful -> REST : PUT -> PATCH, idempotency?
 		todoRoute.PATCH("/:todoItemId/desc", todo.UpdateDesc)
 		//todoRoute.DELETE("/:todoItemID",todo.Delete)
+		//TODO: only way to init runtime variables? (env vars set at runtime)
+		todoController.Init()
 	}
 }

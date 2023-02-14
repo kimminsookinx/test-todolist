@@ -53,6 +53,9 @@ var todoItemModel = new(models.TodoItemModel)
 var todoItemForm = new(forms.TodoItemForm)
 
 //TODO: implement common error handler
+func (ctrl TodoController) Init() {
+	todoItemModel.Init()
+}
 
 func (ctrl TodoController) GetList(c *gin.Context) {
 	var data []models.TodoItem
