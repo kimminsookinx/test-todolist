@@ -13,14 +13,15 @@ import (
 )
 
 // TODO: if more models are added, divide into {modelName}.go
+// https://willnorris.com/2014/go-rest-apis-and-pointers/
 type TodoItem struct {
-	ID        int64     `db:"id, primaryket, autoincrement" json:"id"`
-	Desc      string    `db:"description" json:"description"`
-	Created   time.Time `db:"created_at" json:"created_at"`
-	Updated   time.Time `db:"last_updated_at" json:"last_updated_at"`
-	Done      bool      `db:"done" json:"done"`
-	Deleted   bool      `db:"deleted" json:"deleted"`
-	DeletedAt time.Time `db:"deleted_at" json:"deleted_at"`
+	ID        int64      `db:"id, primaryket, autoincrement" json:"id"`
+	Desc      string     `db:"description" json:"description"`
+	Created   time.Time  `db:"created_at" json:"created_at"`
+	Updated   time.Time  `db:"last_updated_at" json:"last_updated_at"`
+	Done      bool       `db:"done" json:"done"`
+	Deleted   bool       `db:"deleted" json:"deleted"`
+	DeletedAt *time.Time `db:"deleted_at" json:"deleted_at"`
 }
 type TodoItemModel struct{}
 
@@ -32,7 +33,7 @@ func (m TodoItemModel) Init() {
 }
 func (m TodoItemModel) SelectTodoItemWhereDeletedIsFalse() (items []TodoItem, err error) {
 	_, err = db.GetDB().Select(&items,
-		"SELECT id, description, created_at, last_updated_at, done, deleted, deleted_at"+
+		"SELECT id, description, created_at, last_updated_at, done, deleted, deleted_at "+
 			"FROM todo.item "+
 			"WHERE deleted=false "+
 			"ORDER BY id DESC LIMIT "+queryLimit)
@@ -41,7 +42,7 @@ func (m TodoItemModel) SelectTodoItemWhereDeletedIsFalse() (items []TodoItem, er
 
 func (m TodoItemModel) SelectTodoItem() (items []TodoItem, err error) {
 	_, err = db.GetDB().Select(&items,
-		"SELECT id, description, created_at, last_updated_at, done deleted, deleted_at"+
+		"SELECT id, description, created_at, last_updated_at, done deleted, deleted_at "+
 			"FROM todo.item "+
 			"ORDER BY id DESC LIMIT "+queryLimit)
 	return items, err
