@@ -1,7 +1,12 @@
+// TODO: implement common error handler(middleware?)
+// TODO: gorp -> gorm
+// TODO: unit test
+// TODO: logs
 package controllers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -20,31 +25,30 @@ import (
 
 /*
 	HTTP status code responses for todo-app methods
+
 		GET
-			-200
-			-400
-			-404
-			-500
+			-200	get success, reponse body has json
+			-400	wrong query params or type
+			-500	internal server error
 		POST
-			-201
-			-400
-			-500
+			-201	item creation success
+			-400	wrong request body json
+			-500	internal server error
 		PATCH
-			-200
-			-201
-			-400
-			-500
+			-200	item update success
+			-201	item creation success -> not used
+			-400	wrong request body json
+			-500	internal server error
 		DELETE
-			-204
-			-400
-			-404	id not found
-			-500
+			-204	item deletion success
+			-400	already deleted item at id
+			-404	id not found ()
+			-500	internal server error
 		PUT - not in use
 			-200
 			-201
 			-400
 			-500
-
 */
 
 type TodoController struct{}
@@ -52,7 +56,6 @@ type TodoController struct{}
 var todoItemModel = new(models.TodoItemModel)
 var todoItemForm = new(forms.TodoItemForm)
 
-//TODO: implement common error handler
 func (ctrl TodoController) Init() {
 	todoItemModel.Init()
 }
@@ -65,14 +68,16 @@ func (ctrl TodoController) GetList(c *gin.Context) {
 	//		maybe use interceptors(does this even exist)? -> see middleware (https://stackoverflow.com/questions/69948784/how-to-handle-errors-in-gin-middleware)
 
 	if queryDeleteValue, queryDeleteFlag := c.GetQuery("deleted"); queryDeleteValue == "true" {
-		data, err = todoItemModel.TodoItemListWithDeletedItems()
+		data, err = todoItemModel.SelectTodoItem()
 	} else if !queryDeleteFlag { //redundant code, just for practice
-		data, err = todoItemModel.TodoItemList()
+		data, err = todoItemModel.SelectTodoItemWhereDeletedIsFalse()
 	} else {
-		data, err = todoItemModel.TodoItemList()
+		data, err = todoItemModel.SelectTodoItemWhereDeletedIsFalse()
 	}
 
 	if err != nil {
+		//we need error branching
+		log.Print(err.Error())
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
@@ -142,7 +147,7 @@ func (ctrl TodoController) UpdateDesc(c *gin.Context) {
 		return
 	}
 
-	err = todoItemModel.UpdateDesc(todoItemId, form)
+	err = todoItemModel.UpdateTodoItemSetDescById(todoItemId, form)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{"Message": "todoitem could not be updated"})
 		return

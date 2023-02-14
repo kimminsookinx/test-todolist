@@ -47,8 +47,10 @@ func (m TodoItemModel) SelectTodoItem() (items []TodoItem, err error) {
 	return items, err
 }
 
-func (m TodoItemModel) Post(form forms.CreateTodoItemForm) (todoItemId int64, err error) {
-	operation, err := db.GetDB().Exec("INSERT INTO todo.item(description, done) VALUES(\"" + form.Desc + "\", false)")
+func (m TodoItemModel) InsertTodoItem(form forms.CreateTodoItemForm) (todoItemId int64, err error) {
+	operation, err := db.GetDB().Exec(
+		"INSERT INTO todo.item(description, done) " +
+			"VALUES(\"" + form.Desc + "\", false)")
 	if err != nil {
 		return 0, err
 	}
@@ -56,14 +58,11 @@ func (m TodoItemModel) Post(form forms.CreateTodoItemForm) (todoItemId int64, er
 	return todoItemId, err
 }
 
-func (m TodoItemModel) UpdateDone(todoItemId int64, form forms.UpdateDoneTodoItemForm) (err error) {
-	var boolString string
-	if *form.Done {
-		boolString = "true"
-	} else {
-		boolString = "false"
-	}
-	operation, err := db.GetDB().Exec("UPDATE todo.item SET done=" + boolString + " WHERE id=" + fmt.Sprintf("%d", todoItemId))
+func (m TodoItemModel) UpdateTodoItemSetDoneById(todoItemId int64, form forms.UpdateDoneTodoItemForm) (err error) {
+	operation, err := db.GetDB().Exec(
+		"UPDATE todo.item " +
+			"SET done=" + strconv.FormatBool(*form.Done) +
+			" WHERE id=" + fmt.Sprintf("%d", todoItemId))
 	if err != nil {
 		return err
 	}
@@ -76,8 +75,11 @@ func (m TodoItemModel) UpdateDone(todoItemId int64, form forms.UpdateDoneTodoIte
 	return err
 }
 
-func (m TodoItemModel) UpdateDesc(todoItemId int64, form forms.UpdateDescTodoItemForm) (err error) {
-	operation, err := db.GetDB().Exec("UPDATE todo.item SET description=\"" + form.Desc + "\" WHERE id=" + fmt.Sprintf("%d", todoItemId))
+func (m TodoItemModel) UpdateTodoItemSetDescById(todoItemId int64, form forms.UpdateDescTodoItemForm) (err error) {
+	operation, err := db.GetDB().Exec(
+		"UPDATE todo.item " +
+			"SET description=\"" + form.Desc + "\" " +
+			"WHERE id=" + fmt.Sprintf("%d", todoItemId))
 	if err != nil {
 		return err
 	}
