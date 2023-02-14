@@ -9,7 +9,15 @@ import (
 type TodoItemForm struct{}
 
 type CreateTodoItemForm struct {
-	Desc string `form:"description" json:"description" binding:"required,max=1000"`
+	Desc string `form:"description" json:"description" binding:"required,max=50"`
+}
+
+type UpdateDescTodoItemForm struct {
+	Desc string `form:"description" json:"description" binding:"required,max=50"`
+}
+
+type UpdateDoneTodoItemForm struct {
+	Done bool `form:"done_flag" json:"done_flag" binding:"required"`
 }
 
 func (f TodoItemForm) Desc(tag string, errMsg ...string) (message string) {
@@ -20,7 +28,7 @@ func (f TodoItemForm) Desc(tag string, errMsg ...string) (message string) {
 		}
 		return errMsg[0]
 	case "max":
-		return "exceed 1000 char"
+		return "exceed 50 char"
 	default:
 		return "unknown error at forms"
 	}

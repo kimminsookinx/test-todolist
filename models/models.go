@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/kimminsookinx/test-todolist/db"
+	"github.com/kimminsookinx/test-todolist/forms"
 )
 
 type TodoItem struct {
@@ -21,6 +22,15 @@ func (m TodoItemModel) TodoItemList() (items []TodoItem, err error) {
 	//"SELECT id, description, created_at, last_updated_at, done_flag FROM todo.item ORDER BY id DESC LIMIT 500"
 	_, err = db.GetDB().Select(&items, "SELECT id, description, created_at, last_updated_at, done_flag FROM todo.item ORDER BY id DESC LIMIT 500")
 	return items, err
+}
+
+func (m TodoItemModel) Post(form forms.CreateTodoItemForm) (todoItemId int64, err error) {
+	operation, err := db.GetDB().Exec("INSERT INTO todo.item(description, done_flag) VALUES(\"" + form.Desc + "\", false)")
+	if err != nil {
+		return 0, err
+	}
+	todoItemId, err = operation.LastInsertId()
+	return todoItemId, err
 }
 
 // helpers (https://github.com/Massad/gin-boilerplate/blob/master/models/util.go)
