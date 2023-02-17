@@ -17,7 +17,7 @@ func createRoute() {
 
 		todoRoute.GET("", todoController.GetList)
 		todoRoute.POST("", todoController.PostItem)
-		todoRoute.PUT("/:todoItemId/done", todoController.UpdateDoneFlag) //RESTful -> REST : PUT -> PATCH, idempotency?
+		todoRoute.PATCH("/:todoItemId/done", todoController.PatchItemDoneFlag)
 		todoRoute.PATCH("/:todoItemId/desc", todoController.UpdateDesc)
 		todoRoute.DELETE("/:todoItemId", todoController.DeleteItem)
 	}
