@@ -6,7 +6,6 @@ package controllers
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -69,16 +68,17 @@ func (ctrl TodoController) GetList(c *gin.Context) {
 
 	if queryDeleteValue, queryDeleteFlag := c.GetQuery("showDeleted"); queryDeleteValue == "true" {
 		data, err = todoItemModel.SelectTodoItem()
-	} else if !queryDeleteFlag { //redundant code, just for practice
+	} else if queryDeleteValue == "false" { //redundant code, just for practice
 		data, err = todoItemModel.SelectTodoItemWhereDeletedIsFalse()
+	} else if queryDeleteFlag { //query param not boolean
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
 	} else {
 		data, err = todoItemModel.SelectTodoItemWhereDeletedIsFalse()
 	}
 
 	if err != nil {
-		//we need error branching
-		log.Print(err.Error())
-		c.AbortWithStatus(http.StatusBadRequest)
+		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
@@ -90,44 +90,47 @@ func (ctrl TodoController) PostItem(c *gin.Context) {
 	var form forms.CreateTodoItemForm
 
 	if validationErr := c.ShouldBindJSON(&form); validationErr != nil {
-		message := todoItemForm.CheckDesc(validationErr)
-		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{"message": message})
+		// todoItemForm.CheckDesc(validationErr)
+		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
-	todoItemId, err := todoItemModel.Post(form)
+	//TODO: select between empty body or return last insert id
+	//todoItemId, err := todoItemModel.InsertTodoItem(form)
+	_, err := todoItemModel.InsertTodoItem(form)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{"message": "Article could not be created"})
+		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "todoItem created", "id": todoItemId})
+	//c.JSON(http.StatusCreated, gin.H{"id": todoItemId})
+	c.Status(http.StatusCreated)
+
 }
 
-func (ctrl TodoController) UpdateDoneFlag(c *gin.Context) {
-	idString := c.Param("todoItemId")
-
-	todoItemId, err := strconv.ParseInt(idString, 10, 64)
+func (ctrl TodoController) PatchItemDoneFlag(c *gin.Context) {
+	//new resource creation not allowed
+	todoItemId, err := strconv.ParseInt(c.Param("todoItemId"), 10, 64)
 	if todoItemId == 0 || err != nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{"Message": "Invalid parameter"})
+		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
 	var form forms.UpdateDoneTodoItemForm
 	if validationErr := c.BindJSON(&form); validationErr != nil {
-		fmt.Print(validationErr.Error())
-		message := todoItemForm.CheckDoneFlag(validationErr)
-		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{"message": message})
+		todoItemForm.CheckDoneFlag(validationErr)
+		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
-	err = todoItemModel.UpdateDone(todoItemId, form)
+	err = todoItemModel.UpdateTodoItemSetDoneById(todoItemId, form)
 	if err != nil {
+		//sql update error
 		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{"Message": "todoitem could not be updated"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "todo updated"})
+	c.JSON(http.StatusCreated, gin.H{"message": "todo updated"})
 }
 
 func (ctrl TodoController) UpdateDesc(c *gin.Context) {
