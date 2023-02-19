@@ -5,7 +5,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -66,16 +65,13 @@ func (ctrl TodoController) GetList(c *gin.Context) {
 	//NOTE: probably not clean (ex: multiple query param)
 	//		maybe use interceptors(does this even exist)? -> see middleware (https://stackoverflow.com/questions/69948784/how-to-handle-errors-in-gin-middleware)
 
-	if queryDeleteValue, queryDeleteFlag := c.GetQuery("showDeleted"); queryDeleteValue == "true" {
-		data, err = todoItemModel.SelectTodoItem()
-	} else if queryDeleteValue == "false" { //redundant code, just for practice
-		data, err = todoItemModel.SelectTodoItemWhereDeletedIsFalse()
-	} else if queryDeleteFlag { //query param not boolean
+	var formString forms.GetQueryFormString
+
+	if validationErr := c.Bind(&formString); validationErr != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
-	} else {
-		data, err = todoItemModel.SelectTodoItemWhereDeletedIsFalse()
 	}
+	data, err = todoItemModel.SelectTodoItem(c.Request.URL.Query())
 
 	if err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
@@ -144,7 +140,6 @@ func (ctrl TodoController) UpdateDesc(c *gin.Context) {
 
 	var form forms.UpdateDescTodoItemForm
 	if validationErr := c.BindJSON(&form); validationErr != nil {
-		fmt.Print(validationErr.Error())
 		message := todoItemForm.CheckDesc(validationErr)
 		c.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{"message": message})
 		return

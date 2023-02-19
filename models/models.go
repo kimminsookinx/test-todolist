@@ -40,10 +40,15 @@ func (m TodoItemModel) SelectTodoItemWhereDeletedIsFalse() (items []TodoItem, er
 	return items, err
 }
 
-func (m TodoItemModel) SelectTodoItem() (items []TodoItem, err error) {
+func (m TodoItemModel) SelectTodoItem(queryValues map[string][]string) (items []TodoItem, err error) {
+	query, err := decodeQuery(queryValues)
+	if err != nil {
+		return nil, err
+	}
 	_, err = db.GetDB().Select(&items,
 		"SELECT id, description, created_at, last_updated_at, done deleted, deleted_at "+
 			"FROM todo.item "+
+			query+
 			"ORDER BY id DESC LIMIT "+queryLimit)
 	return items, err
 }
@@ -124,6 +129,36 @@ func (m TodoItemModel) CheckRowExistenceByIdAndDeleted(todoItemId int64, deleted
 		return false, err
 	}
 	return result, nil
+}
+
+//custom helpers
+
+func decodeQuery(querys map[string][]string) (result string, err error) {
+	var interResultString string
+
+	for key, val := range querys {
+		switch key {
+		case "showDeleted":
+			//oneof validation cannot contain spaces (https://github.com/go-playground/validator/issues/525)
+			if val[0] == "" {
+				interResultString = interResultString + "deleted=false "
+				break
+			}
+			show, parseErr := strconv.ParseBool(val[0])
+			if parseErr != nil {
+				return "", parseErr
+			}
+			if !show {
+				interResultString = interResultString + "deleted=false "
+			} else {
+				interResultString = interResultString + ""
+			}
+		}
+	}
+	if len(interResultString) > 0 {
+		interResultString = "WHERE " + interResultString
+	}
+	return interResultString, nil
 }
 
 // TODO: check if used, if not used delete helpers

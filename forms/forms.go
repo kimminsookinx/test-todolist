@@ -22,6 +22,10 @@ type UpdateDoneTodoItemForm struct {
 	Done *bool `form:"done" json:"done" binding:"required"`
 }
 
+type GetQueryFormString struct {
+	ShowDeleted string `form:"showDeleted" binding:"omitempty,oneof=true false"`
+}
+
 func (f TodoItemForm) Desc(tag string, errMsg ...string) (message string) {
 	switch tag {
 	case "required":
