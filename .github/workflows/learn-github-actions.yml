@@ -25,4 +25,4 @@ jobs:
         kubeconfig: ${{ secrets.KUBECONFG_SECRET }}
 
     - name: Test kubectl command
-      run: kubectl get pods -n test-iks
+      run: kubectl get pods -A
