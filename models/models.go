@@ -139,11 +139,12 @@ func decodeQuery(querys map[string][]string) (result string, err error) {
 	for key, val := range querys {
 		switch key {
 		case "showDeleted":
-			//oneof validation cannot contain spaces (https://github.com/go-playground/validator/issues/525)
-			if val[0] == "" {
-				interResultString = interResultString + "deleted=false "
-				break
-			}
+			// //oneof validation cannot contain spaces (https://github.com/go-playground/validator/issues/525)
+			// //we take care of this by policy ("showDeleted=" is an illegal param)
+			// if val[0] == "" {
+			// 	interResultString = interResultString + "deleted=false "
+			// 	break
+			// }
 			show, parseErr := strconv.ParseBool(val[0])
 			if parseErr != nil {
 				return "", parseErr
