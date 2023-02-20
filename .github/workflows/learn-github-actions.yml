@@ -13,3 +13,16 @@ jobs:
 
     - run: |
         echo "aaa" > hello.txt
+
+  deploy:
+    needs: build
+    runs-on: self-hosted
+    steps:
+    - name: Kubernetes Set Context
+      uses: Azure/k8s-set-context@v2
+      with:
+        method: kubeconfig
+        kubeconfig: ${{ secrets.KUBECONFG_SECRET }}
+
+    - name: Test kubectl command
+      run: kubectl get pods -n test-iks
