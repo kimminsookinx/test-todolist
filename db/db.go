@@ -22,7 +22,9 @@ type DB struct {
 var db *gorp.DbMap
 
 func Init() {
-	dbinfo := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", os.Getenv("TODO_DB_USER"), os.Getenv("TODO_DB_PASS"), os.Getenv("TODO_DB_ADDRESS"), os.Getenv("TODO_DB_PORT"), os.Getenv("TODO_DB_NAME"))
+	dbinfo := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
+		os.Getenv("TODO_DB_USER"), os.Getenv("TODO_DB_PASS"),
+		os.Getenv("TODO_DB_ADDRESS"), os.Getenv("TODO_DB_PORT"), os.Getenv("TODO_DB_NAME"))
 	var err error
 	db, err = connect(dbinfo)
 	if err != nil {
@@ -34,13 +36,11 @@ func Init() {
 func connect(datasSourceName string) (*gorp.DbMap, error) {
 	db, err := sql.Open("mysql", datasSourceName)
 	if err != nil {
-		fmt.Printf("open error")
 		return nil, err
 	}
 
 	err = db.Ping()
 	if err != nil {
-		fmt.Printf("ping error")
 		return nil, err
 	}
 	dbmap := &gorp.DbMap{Db: db, Dialect: gorp.MySQLDialect{}}
