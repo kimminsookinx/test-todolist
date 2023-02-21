@@ -1,11 +1,6 @@
 package router
 
-import (
-	"net/http"
-
-	"github.com/gin-gonic/gin"
-	"github.com/kimminsookinx/test-todolist/controllers"
-)
+import "github.com/kimminsookinx/test-todolist/controllers"
 
 /*
 	API endpoint naming conventions (clusterapi -> k8s)
@@ -13,23 +8,17 @@ import (
 */
 
 func createRoute() {
-	//TODO: delete test ping url
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
-
-	//TODO: add delete url
-	//TODO: create put for compatability?
 	todoRoute := r.Group("/v1/todos")
 	{
-		todo := new(controllers.TodoController)
+		todoController := new(controllers.TodoController)
 
-		todoRoute.GET("", todo.GetList)
-		todoRoute.POST("", todo.PostItem)
-		todoRoute.PUT("/:todoItemId/done", todo.UpdateDoneFlag) //RESTful -> REST : PUT -> PATCH, idempotency?
-		todoRoute.PATCH("/:todoItemId/desc", todo.UpdateDesc)
-		//todoRoute.DELETE("/:todoItemID",todo.Delete)
+		//TODO: only way to init runtime variables? (env vars set at runtime)
+		todoController.Init()
+
+		todoRoute.GET("", todoController.GetList)
+		todoRoute.POST("", todoController.PostItem)
+		todoRoute.PATCH("/:todoItemId/done", todoController.PatchItemDoneFlag)
+		todoRoute.PATCH("/:todoItemId/desc", todoController.UpdateDesc)
+		todoRoute.DELETE("/:todoItemId", todoController.DeleteItem)
 	}
 }

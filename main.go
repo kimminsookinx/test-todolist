@@ -3,8 +3,6 @@
 	https://blog.logrocket.com/building-microservices-go-gin/
 	https://github.com/Massad/gin-boilerplate
 	https://blog.techchee.com/build-a-rest-api-with-golang-gin-and-mysql/
-
-	TODO: get linter
 */
 
 package main
@@ -18,17 +16,20 @@ import (
 	"github.com/kimminsookinx/test-todolist/router"
 )
 
+//TODO: add SSL
+
 func main() {
-	//DESC: load environment variables
+	//NOTE: load environment variables
 	err := godotenv.Load("todo.env")
 	if err != nil {
 		log.Fatal("error: failed to load env")
 		return
 	}
 
-	//DEC: initialize DB connection
+	//NOTE: initialize DB connection
 	db.Init()
 
-	//DESC: initialize and run gin server
+	//NOTE: initialize and run gin server
 	router.Init()
+	router.Run()
 }
