@@ -37,8 +37,8 @@ jobs:
       with:
         method: kubeconfig
         kubeconfig: ${{ secrets.KUBECONFG_SECRET }}
-    - name: test kubectl
-      run: kubectl get pods -o wide
+    # - name: test kubectl
+    #   run: kubectl get pods -o wide
     - name: change deployment image
       run: kubectl set image deployment/todo-deployment todo=192.168.21.10:5000/test/todo-app:${{ needs.build.outputs.new-image-tag }}
     - name: wait rollout and get deployment
