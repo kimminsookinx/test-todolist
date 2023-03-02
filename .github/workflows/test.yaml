@@ -20,7 +20,7 @@ jobs:
         echo for action :  ${{ github.event_name}}
         echo commit name :  ${{ github.event.head_commit.id}}
         echo commit id :  '${{ github.event.head_commit.message}}'
-        echo "COMMIT_ID=$(echo ${{ github.event.head_commit.message}})" >> $GITHUB_ENV
+        echo "COMMIT_ID=$(echo ${{ github.event.head_commit.id}})" >> $GITHUB_ENV
     - name: build docker image and push to local docker registry
       uses: docker/build-push-action@v4
       with:
