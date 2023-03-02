@@ -1,0 +1,15 @@
+name: gitAction cicd test
+
+on:
+  push:
+    branches:
+      - dockerize
+        
+        
+jobs:
+  build:
+    runs-on: self-hosted
+    steps:
+
+    - run: |
+        echo "aaa" > hello.txt
