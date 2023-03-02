@@ -19,7 +19,10 @@ jobs:
         echo on branch            :  ${{ github.ref_name }}
         echo for action           :  ${{ github.event_name}}
         echo for action           :  ${{ github.event.head_commit.id}}
-        echo "BRANCH_NAME=$(echo ${{ github.ref_name }})" >> $GITHUB_ENV
-        echo $GITHUB_ENV >> test.txt
+        echo for action           :  ${{ github.event.head_commit.message}}
+        echo for action  before         :  ${{ github.event.before}}
+        echo for action  after         :  ${{ github.event.after}}
+        echo for action           :  ${{ github.event.commits}}
+#        echo "BRANCH_NAME=$(echo ${{ github.ref_name }})" >> $GITHUB_ENV
     - run: |
         echo "aaa" > hello.txt
