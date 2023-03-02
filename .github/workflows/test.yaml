@@ -10,19 +10,23 @@ jobs:
   build:
     runs-on: self-hosted
     outputs:
-      new-image-tag: ${{ env.TAG}}
+      new-image-tag: ${{ env.TAG }}
     steps:
     - uses: actions/checkout@v2
     - name: github branch and commit name retrieval
       run: |
-        echo ci/cd triggered for  :  ${{ github.repository }}
-        echo on branch            :  ${{ github.ref_name }}
-        echo for action           :  ${{ github.event_name}}
-        echo for action           :  ${{ github.event.head_commit.id}}
-        echo for action           :  '${{ github.event.head_commit.message}}'
-        echo for action  before         :  ${{ github.event.before}}
-        echo for action  after         :  ${{ github.event.after}}
-        echo for action           :  ${{ github.event.commits}}
-#        echo "BRANCH_NAME=$(echo ${{ github.ref_name }})" >> $GITHUB_ENV
-    - run: |
-        echo "aaa" > hello.txt
+        echo ci/cd triggered for :  ${{ github.repository }}
+        echo on branch :  ${{ github.ref_name }}
+        echo for action :  ${{ github.event_name}}
+        echo commit name :  ${{ github.event.head_commit.id}}
+        echo commit id :  '${{ github.event.head_commit.message}}'
+        echo "COMMIT_ID=$(echo ${{ github.event.head_commit.message}})" >> $GITHUB_ENV
+    - name: build docker image and push to local docker registry
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: localhost:5000/test/todo-app:${{ env.TAG }}
+
+        
