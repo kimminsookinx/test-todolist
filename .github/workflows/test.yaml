@@ -36,6 +36,7 @@ jobs:
       uses: Azure/k8s-set-context@v2
       with:
         method: kubeconfig
-        kubeconfig: ${{ secrets.KUBE_CONFG_SECRET }}
+        kubeconfig: ${{ secrets.KUBECONFG_SECRET }}
     - name: test kubectl
       run: kubectl get pods -o wide
+#    - name: 
