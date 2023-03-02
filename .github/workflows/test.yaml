@@ -19,7 +19,7 @@ jobs:
         echo on branch            :  ${{ github.ref_name }}
         echo for action           :  ${{ github.event_name}}
         echo for action           :  ${{ github.event.head_commit.id}}
-        echo for action           :  ${{ github.event.head_commit.message}}
+        echo for action           :  '${{ github.event.head_commit.message}}'
         echo for action  before         :  ${{ github.event.before}}
         echo for action  after         :  ${{ github.event.after}}
         echo for action           :  ${{ github.event.commits}}
