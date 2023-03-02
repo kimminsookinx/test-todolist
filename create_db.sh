@@ -2,9 +2,9 @@
 #
 #mysql variables
 #
-todo_db_name='todo5'
-todo_user_name='create05'
-todo_user_pw='create05'
+todo_db_name='todo'
+todo_user_name='superuser'
+todo_user_pw='superuser'
 todo_table_name='item'
 sql_file_name='todo.sql'
 #
