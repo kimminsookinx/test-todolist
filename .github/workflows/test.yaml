@@ -10,6 +10,11 @@ jobs:
   build:
     runs-on: self-hosted
     steps:
-
+    - uses: actions/checkout@v2
+    - name: github branch and commit name retrieval
+      run: |
+        echo ${{ github.ref_name }}
+        echo "BRANCH_NAME=$(echo ${{ github.ref_name }})" >> $GITHUB_ENV
+        echo $GITHUB_ENV
     - run: |
         echo "aaa" > hello.txt
