@@ -18,8 +18,8 @@ jobs:
         echo ci/cd triggered for :  ${{ github.repository }}
         echo on branch :  ${{ github.ref_name }}
         echo for action :  ${{ github.event_name}}
-        echo commit name :  ${{ github.event.head_commit.id}}
-        echo commit id :  '${{ github.event.head_commit.message}}'
+        echo commit id :  ${{ github.event.head_commit.id}}
+        echo commit name :  '${{ github.event.head_commit.message}}'
         echo "COMMIT_ID=$(echo ${{ github.event.head_commit.id}})" >> $GITHUB_ENV
     - name: build docker image and push to local docker registry
       uses: docker/build-push-action@v4
@@ -28,5 +28,14 @@ jobs:
         file: ./Dockerfile
         push: true
         tags: localhost:5000/test/todo-app:${{ env.COMMIT_ID }}
-
-        
+  deploy:
+    needs: build
+    runs-on: self-hosted
+    steps:
+    - name: k8s set kubeconfig
+      uses: Azure/k8s-set-context@v2
+      with:
+        method: kubeconfig
+        kubeconfig: ${{ secrets.KUBE_CONFG_SECRET }}
+    - name: test kubectl
+      run: kubectl get pods -o wide
