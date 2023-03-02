@@ -10,7 +10,7 @@ jobs:
   build:
     runs-on: self-hosted
     outputs:
-      new-image-tag: ${{ env.TAG }}
+      new-image-tag: ${{ env.COMMIT_ID }}
     steps:
     - uses: actions/checkout@v2
     - name: github branch and commit name retrieval
@@ -27,6 +27,6 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: localhost:5000/test/todo-app:${{ env.TAG }}
+        tags: localhost:5000/test/todo-app:${{ env.COMMIT_ID }}
 
         
