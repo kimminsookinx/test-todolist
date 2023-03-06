@@ -27,7 +27,7 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: localhost:5000/test/todo-app:${{ env.COMMIT_ID }}
+        tags: localhost:5000/test/todo-app:latest, localhost:5000/test/todo-app:${{ env.COMMIT_ID }}
   deploy:
     needs: build
     runs-on: self-hosted
