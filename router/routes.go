@@ -8,7 +8,7 @@ import "github.com/kimminsookinx/test-todolist/controllers"
 */
 
 func createRoute() {
-	todoRoute := r.Group("/v4/todos")
+	todoRoute := r.Group("/v1/todos")
 	{
 		todoController := new(controllers.TodoController)
 
