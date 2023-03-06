@@ -20,6 +20,7 @@ FROM alpine:3.14
 
 WORKDIR /app
 COPY --from=builder /app/todo-docker-test /app/todo-docker-test
+COPY --from=builder /app/todo.env /app/todo.env
 
 #APP ENV VARS (DB info)
 ENV TODO_DB_USER=superuser \
