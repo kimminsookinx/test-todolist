@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-deployment
+  labels:
+    app: todo-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: todo
+  template:
+    metadata:
+      labels:
+        app: todo
+    spec:
+      containers:
+      - name: todo
+        image: 192.168.21.10:5000/test/todo-app:aeedb53f5990019107aef2e8ddb50c439fdcb0d0
+        env:
+          - name: TODO_DB_ADDRESS
+            value: todo-mysql.mysql-ns.svc.cluster.local
+        ports:
+        - containerPort: 8083
+      # nodeSelector:
+      #   kubernetes.io/hostname: k8s-todo-cluster-01-todo-cluster-ndgp-01-1
