@@ -22,14 +22,6 @@ WORKDIR /app
 COPY --from=builder /app/todo-docker-test /app/todo-docker-test
 COPY --from=builder /app/todo.env /app/todo.env
 
-#APP ENV VARS (DB info)
-ENV TODO_DB_USER=superuser \
-    TODO_DB_PASS=superuser \
-    TODO_DB_NAME=todo \
-    TODO_DB_ADDRESS=192.168.0.33 \
-    TODO_DB_PORT=3306 \
-    TODO_DB_QUERY_MAX_LIMIT=500
-
 EXPOSE 8083
 
 CMD [ "/app/todo-docker-test" ]
