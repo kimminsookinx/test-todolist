@@ -28,18 +28,18 @@ jobs:
         file: ./Dockerfile
         push: true
         tags: localhost:5000/test/todo-app:latest, localhost:5000/test/todo-app:${{ env.COMMIT_ID }}
-  deploy:
-    needs: build
-    runs-on: self-hosted
-    steps:
-    - name: k8s set kubeconfig
-      uses: Azure/k8s-set-context@v2
-      with:
-        method: kubeconfig
-        kubeconfig: ${{ secrets.KUBECONFG_SECRET }}
-    # - name: test kubectl
-    #   run: kubectl get pods -o wide
-    - name: change deployment image
-      run: kubectl set image deployment/todo-deployment todo=192.168.21.10:5000/test/todo-app:${{ needs.build.outputs.new-image-tag }}
-    - name: wait rollout and get deployment
-      run: sleep 60 && kubectl get deployment -o wide
+  # deploy:
+  #   needs: build
+  #   runs-on: self-hosted
+  #   steps:
+  #   - name: k8s set kubeconfig
+  #     uses: Azure/k8s-set-context@v2
+  #     with:
+  #       method: kubeconfig
+  #       kubeconfig: ${{ secrets.KUBECONFG_SECRET }}
+  #   # - name: test kubectl
+  #   #   run: kubectl get pods -o wide
+  #   - name: change deployment image
+  #     run: kubectl set image deployment/todo-deployment todo=192.168.21.10:5000/test/todo-app:${{ needs.build.outputs.new-image-tag }}
+  #   - name: wait rollout and get deployment
+  #     run: sleep 60 && kubectl get deployment -o wide
