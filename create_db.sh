@@ -10,7 +10,10 @@ sql_file_name='todo.sql'
 #
 #create database
 #
-echo "CREATE DATABASE IF NOT EXISTS \`$todo_db_name\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT ENCRYPTION='N';" >> $sql_file_name
+#mysql 5.7(helm version) does not support
+#1. 
+#echo "CREATE DATABASE IF NOT EXISTS \`$todo_db_name\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT ENCRYPTION='N';" >> $sql_file_name
+echo "CREATE DATABASE IF NOT EXISTS \`$todo_db_name\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" >> $sql_file_name
 #
 #create user and grant privlege to db
 #
@@ -35,4 +38,4 @@ echo ") AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci; " >
 #
 echo "INSERT INTO \`$todo_db_name\`.\`$todo_table_name\`(description) VALUES(\"first todo item\"); " >> $sql_file_name
 echo "SELECT SLEEP(3);" >> $sql_file_name
-echo "INSERT INTO \`$todo_db_name\`.\`$todo_table_name\`(description) VALUES(\"second todo item\"); " >> $sql_file_name
+echo "INSERT INTO \`$todo_db_name\`.\`$todo_table_name\`(description) VALUES(\"두번째 할일 아이템\"); " >> $sql_file_name

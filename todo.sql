@@ -1,0 +1,17 @@
+CREATE DATABASE IF NOT EXISTS `todo` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER IF NOT EXISTS 'superuser'@'%' IDENTIFIED BY 'superuser';
+GRANT ALL ON `todo`.* to 'superuser'@'%';
+USE `todo`;
+CREATE TABLE item (
+`id` int NOT NULL AUTO_INCREMENT, 
+`description` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL, 
+`created_at` datetime DEFAULT CURRENT_TIMESTAMP, 
+`last_updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+`done` tinyint DEFAULT '0', 
+`deleted` tinyint DEFAULT '0', 
+`deleted_at` datetime DEFAULT NULL, 
+PRIMARY KEY (`id`) 
+) AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci; 
+INSERT INTO `todo`.`item`(description) VALUES("first todo item"); 
+SELECT SLEEP(3);
+INSERT INTO `todo`.`item`(description) VALUES("두번째 할일 아이템"); 
