@@ -3,7 +3,7 @@ name: gitAction cicd test
 on:
   push:
     branches:
-      - feature/k8s
+      - main
         
         
 jobs:
